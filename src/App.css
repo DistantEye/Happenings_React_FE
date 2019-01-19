@@ -1,5 +1,18 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+}
+
 .App {
   text-align: center;
+  height: 100%;
 }
 
 .App-logo {
@@ -29,4 +42,30 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.vAlignCenter {
+    vertical-align: middle;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.brandText {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.maxHeight {
+  height: 100%;
+}
+
+.blur {
+  -webkit-filter: blur(4px);
+  -moz-filter: blur(4px);
+  -o-filter: blur(4px);
+  -ms-filter: blur(4px);
+  filter: blur(4px);
+  background-color: #f8f9fa;
 }
