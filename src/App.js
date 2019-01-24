@@ -5,7 +5,7 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { Container } from 'react-bootstrap';
+import { Container, Modal } from 'react-bootstrap';
 
 import './App.css';
 
@@ -23,12 +23,13 @@ import {
 import Invitations from './components/pages/Invitations'
 import {
   Login,
-  Register
+  Logout
 } from './components/pages/Login'
 import Profile from './components/pages/Profile'
 import Reminders from './components/pages/Reminders'
 
-import ApiRequest from './services/ApiRequest'
+import { ApiRequest }  from './services/ApiRequest'
+import CElm from './components/helper/CElm'
 
 class App extends Component {
   constructor(props) {
@@ -54,9 +55,10 @@ class App extends Component {
     var self = this;
     ApiRequest('login/getcurrentUser', 'GET',
                 function(xhr) {
-                  let user = JSON.parse(xhr.responseText);
+                  const respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
+                  let user = respText && JSON.parse(respText);
                   self.setState(state => ({
-                    isLoggedIn: !(user == null || user == undefined),
+                    isLoggedIn: !(!user || user === null || user === undefined),
                     userData: user
                   }));
                 },
@@ -76,26 +78,62 @@ class App extends Component {
       cssInsert = " blur";
     }
 
+    const RenderLogout = (props) => {
+      return (
+        <Logout callback={this.checkLogin} />
+      );
+    }
+
+    const loginId = this.state.userData.id;
+    const userData = this.state.userData;
+
+    const RenderProfile = (props) => {
+      return (
+        <Profile userId={loginId} />
+      );
+    }
+
+    const RenderHappening = ({match}) => {
+      return (
+        <Happening userData={userData} match={match}/>
+      );
+    }
+
     return (
-      <HashRouter>
-        <div className={"App maxHeight" + cssInsert}>
-          <TopBar />
-          <div className="content bg-light maxHeight">
-            <Container className="container-fluid">
-                <Switch>
-                    <Route path="/calendar/viewOther" component={CalendarViewOther}/>
-                    <Route path="/calendar" component={Calendar}/>
-                    <Route path="/happening" component={Happening}/>
-                    <Route path="/invitation" component={Invitations}/>
-                    <Route path="/profile" component={Profile}/>
-                    <Route path="/admin" component={Admin}/>
-                    <Route path="/reminders" component={Reminders}/>
-                    <Route exact path="/" component={Calendar}/>
-                </Switch>
-            </Container>
-          </div>
-        </div>
-      </HashRouter>
+      <div className="maxHeight">
+          <HashRouter>
+            <div className={"App maxHeight" + cssInsert} >
+              <TopBar userData={this.state.userData} />
+              <div className="content bg-light maxHeight">
+                <Container className="container-fluid">
+                    <CElm con={isLoggedIn}>
+                        <Switch>
+                            <Route path="/calendar/viewOther" component={CalendarViewOther}/>
+                            <Route path="/calendar" component={Calendar}/>
+                            <Route path="/happening/:id" render={RenderHappening}/>
+                            <Route path="/invitation" component={Invitations}/>
+                            <Route path="/profile" render={RenderProfile}/>
+                            <Route path="/admin" component={Admin}/>
+                            <Route path="/reminders" component={Reminders}/>
+                            <Route path="/Logout" render={RenderLogout}/>
+                            <Route exact path="/" component={Calendar}/>
+                        </Switch>
+                    </CElm>
+                </Container>
+              </div>
+            </div>
+          </HashRouter>
+          <Modal
+            show={!isLoggedIn}
+            centered
+            backdrop="static"
+            dialogClassName="largeModal"
+          >
+            <div className="padding">
+              <Login callback={this.checkLogin}/>
+            </div>
+          </Modal>
+      </div>
     );
   }
 }

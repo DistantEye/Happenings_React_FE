@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Badge } from 'react-bootstrap';
 
+import { ApiRequest }  from '../../services/ApiRequest'
+
 class ReminderCount extends Component {
   constructor(props) {
     super(props);
@@ -9,26 +11,36 @@ class ReminderCount extends Component {
 
   componentDidMount() {
       this.reminderPull = setInterval(
-        () => this.tick(),
-        1000
+        () => this.pull(),
+        2000
       );
+      this.pull();
   }
 
   componentWillUnmount() {
       clearInterval(this.reminderPull);
   }
 
-  tick() {
-    this.setState({
-      numActive: -1
-    });
+  pull() {
+      var self = this;
+      ApiRequest('clock/getcount', 'GET',
+                  function(xhr) {
+                    const respText = (xhr.responseText && xhr.responseText !== "" && Number.isInteger(Number.parseInt(xhr.responseText))) && xhr.responseText;
+                    let numActive = respText ? Number.parseInt(respText) : -1;
+                    self.setState(state => ({
+                      numActive: numActive
+                    }));
+                  },
+                  function(xhr) {
+                      // TODO error handling?
+                  });
   }
 
   render() {
     const numActive = this.state.numActive;
     if (numActive && numActive > 0) {
         return (
-          <Badge>
+          <Badge variant="danger">
             {numActive}
           </Badge>
         );

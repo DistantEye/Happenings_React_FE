@@ -1,4 +1,4 @@
-function apiRequest(target, method, onSuccess, onFailure, json) {
+function ApiRequest(target, method, onSuccess, onFailure, json) {
   const urlBase = "https://localhost:44345/api/"; // TODO fix this later, env variables are broken
   let postType = '';
 
@@ -30,7 +30,7 @@ function apiRequest(target, method, onSuccess, onFailure, json) {
   }
 
   xhr.onload = function() {
-    if (xhr.status === 200) {
+    if (xhr.status === 200 || xhr.status === 204) {
         onSuccess(xhr);
     }
     else {
@@ -46,4 +46,17 @@ function apiRequest(target, method, onSuccess, onFailure, json) {
   }
 }
 
-export default apiRequest;
+function SetErrorText(xhr, container)
+{
+    let text = xhr.responseText;
+    let jsonAttempt = text && JSON.parse(text);
+    if (jsonAttempt && jsonAttempt.message)
+    {
+        text = jsonAttempt.message;
+    }
+    container.setState(state => ({
+        errorText: text
+    }));
+}
+
+export { ApiRequest, SetErrorText };

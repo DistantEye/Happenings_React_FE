@@ -23,7 +23,7 @@ function TopBar(props) {
                             Calendar
                         </RouterNavItem>
 
-                        <RouterNavItem to="/Happening/Create">
+                        <RouterNavItem to="/Happening/Write">
                             Create Happening
                         </RouterNavItem>
 
@@ -35,11 +35,11 @@ function TopBar(props) {
                             View Other Calendars
                         </RouterNavItem>
 
-                        <RouterNavItem to="/Home/Profile">
+                        <RouterNavItem to="/Profile">
                             Profile
                         </RouterNavItem>
 
-                        <CElm con="">
+                        <CElm con={props.userData.role === "Admin"}>
                             <RouterNavItem to="/Admin/Index">
                                 Admin
                             </RouterNavItem>
@@ -49,7 +49,7 @@ function TopBar(props) {
                             Reminders <ReminderCount></ReminderCount>
                         </RouterNavItem>
 
-                        <RouterNavItem to="/Login/Logout">
+                        <RouterNavItem to="/Logout">
                             Logout
                         </RouterNavItem>
 

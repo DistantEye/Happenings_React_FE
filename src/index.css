@@ -1,4 +1,5 @@
 @import 'https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css';
+@import '../node_modules/react-datetime/css/react-datetime.css'; /* For some reason relative path didn't work here */
 
 body {
   margin: 0;

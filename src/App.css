@@ -44,12 +44,66 @@ body {
   }
 }
 
+.largeModal {
+  height: 80%;
+  width: 80%;
+  min-width: 40%;
+}
+
+.width20Per {
+  width: 20%;
+}
+
+.width40Per {
+  width: 40%;
+}
+
+.width80Per {
+  width: 80%;
+}
+
+.width100Px {
+  width: 100px;
+}
+
+.padding {
+  padding: 20px 20px 20px 20px;
+}
+
+.paddingMinor {
+  padding: 5px 5px 5px 5px;
+}
+
+.verticalPaddingMinor {
+  padding: 5px 0px 5px 0px;
+}
+
 .vAlignCenter {
     vertical-align: middle;
 }
 
+.nudgeUp {
+    margin-top: -10px;
+}
+
+.nudgeUpMinor {
+    margin-top: -5px;
+}
+
+.leftTextAlign {
+    text-align: left;
+}
+
 .bold {
     font-weight: bold;
+}
+
+.bigText {
+    font-size: 36px;
+}
+
+.errorText {
+    color: red;
 }
 
 .brandText {
@@ -59,6 +113,23 @@ body {
 
 .maxHeight {
   height: 100%;
+}
+
+.rightContainer {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.inLineBlock {
+    display: inline-block;
+}
+
+.clock {
+    color: black;
+    font-size: 32px;
+    font-weight: bold;
+    border: 5px solid black;
+    text-align: center;
 }
 
 .blur {
