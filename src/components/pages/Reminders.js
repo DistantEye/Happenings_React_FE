@@ -27,9 +27,9 @@ class Reminders extends Component {
     }
 
     handleIncludeToggle(event) {
-        this.setState({
-            includeSilenced: !this.state.includeSilenced
-        }, function() {
+        this.setState((prevState) => ({
+            includeSilenced: !prevState.includeSilenced
+        }), function() {
             this.getData(); // will be safely called after the toggle is done.
         });
     }

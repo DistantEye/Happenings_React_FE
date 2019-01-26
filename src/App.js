@@ -87,6 +87,12 @@ class App extends Component {
     const loginId = this.state.userData.id;
     const userData = this.state.userData;
 
+    const RenderCalendar = ({location}) => {
+      return (
+        <Calendar location={location} userData={userData} />
+      );
+    }
+
     const RenderProfile = (props) => {
       return (
         <Profile userId={loginId} />
@@ -95,7 +101,13 @@ class App extends Component {
 
     const RenderHappening = ({match}) => {
       return (
-        <Happening userData={userData} match={match}/>
+        <Happening userData={userData} match={match} />
+      );
+    }
+
+    const RenderHappeningWrite = ({match,history}) => {
+      return (
+        <HappeningWrite userData={userData} match={match} history={history} />
       );
     }
 
@@ -109,14 +121,15 @@ class App extends Component {
                     <CElm con={isLoggedIn}>
                         <Switch>
                             <Route path="/calendar/viewOther" component={CalendarViewOther}/>
-                            <Route path="/calendar" component={Calendar}/>
+                            <Route path="/calendar" render={RenderCalendar}/>
+                            <Route path="/happening/write/:id?" render={RenderHappeningWrite}/>
                             <Route path="/happening/:id" render={RenderHappening}/>
                             <Route path="/invitation" component={Invitations}/>
                             <Route path="/profile" render={RenderProfile}/>
                             <Route path="/admin" component={Admin}/>
                             <Route path="/reminders" component={Reminders}/>
                             <Route path="/Logout" render={RenderLogout}/>
-                            <Route exact path="/" component={Calendar}/>
+                            <Route exact path="/" render={RenderCalendar}/>
                         </Switch>
                     </CElm>
                 </Container>

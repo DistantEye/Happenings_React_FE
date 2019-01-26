@@ -25,9 +25,9 @@ class Invitations extends Component {
     }
 
     handleIncludeToggle(event) {
-        this.setState({
-            includeAnswered: !this.state.includeAnswered
-        }, function() {
+        this.setState((prevState) => ({
+            includeAnswered: !prevState.includeAnswered
+        }), function() {
             this.getData(); // will be safely called after the toggle is done.
         });
     }

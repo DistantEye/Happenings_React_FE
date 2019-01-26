@@ -147,129 +147,155 @@ class Happening extends Component {
         const calendarPrivate = data.currentUserInfo && data.currentUserInfo.isPrivate ? "checked" : "";
         const calendarPublic = data.currentUserInfo && data.currentUserInfo.isPrivate ? "" : "checked";
 
-        let membershipForm = !data.currentUserInfo ? (<div></div>) : (
-            <Form
-            noValidate
-            validated={this.state.validated}
-            onSubmit={e => this.handleSubmit(e)}
-            className="leftTextAlign"
-            >
+        // reference issues make CElm unusable, so we do our forms up top
+        let variableForm = !data.currentUserInfo ?
+            (
+                <Form>
+                    <input
+                      type="hidden"
+                      id="userId"
+                      name="userId"
+                      value={this.state.userData.id}
+                    />
+                    <input
+                      type="hidden"
+                      id="happeningId"
+                      name="happeningId"
+                      value={data.id}
+                    />
+                    <Row className="width40Per verticalPaddingMinor">
+                        <Col>
+                            <Button variant="primary" onClick={(e) => this.handleJoin(e)}>
+                                Join Happening
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
+            )
+            :
+            (
+                <Form
+                noValidate
+                validated={this.state.validated}
+                onSubmit={e => this.handleSubmit(e)}
+                className="leftTextAlign"
+                >
 
-                <input
-                  type="hidden"
-                  id="id"
-                  name="id"
-                  value={data.currentUserInfo.id}
-                />
+                    <input
+                      type="hidden"
+                      id="id"
+                      name="id"
+                      value={data.currentUserInfo.id}
+                    />
 
 
-                <input
-                  type="hidden"
-                  id="happeningId"
-                  name="happeningId"
-                  value={data.id}
-                />
+                    <input
+                      type="hidden"
+                      id="happeningId"
+                      name="happeningId"
+                      value={data.id}
+                    />
 
-                <input
-                  type="hidden"
-                  id="happeningName"
-                  name="happeningName"
-                  value={data.name}
-                />
+                    <input
+                      type="hidden"
+                      id="happeningName"
+                      name="happeningName"
+                      value={data.name}
+                    />
 
-                <input
-                  type="hidden"
-                  id="date"
-                  name="date"
-                  value={data.startTime}
-                />
+                    <input
+                      type="hidden"
+                      id="date"
+                      name="date"
+                      value={data.startTime}
+                    />
 
-                <input
-                  type="hidden"
-                  id="userId"
-                  name="userId"
-                  value={this.state.userData.id}
-                />
+                    <input
+                      type="hidden"
+                      id="userId"
+                      name="userId"
+                      value={this.state.userData.id}
+                    />
 
-                <input
-                  type="hidden"
-                  id="userName"
-                  name="userName"
-                  value={this.state.userData.name}
-                />
+                    <input
+                      type="hidden"
+                      id="userName"
+                      name="userName"
+                      value={this.state.userData.name}
+                    />
 
-                <Row className="width40Per verticalPaddingMinor">
-                    <Col className="bold">Manage Membership:</Col>
-                </Row>
+                    <Row className="width40Per verticalPaddingMinor">
+                        <Col className="bold">Manage Membership:</Col>
+                    </Row>
 
-                <Row className="verticalPaddingMinor">
-                    <Col xs={2}>
-                        <Form.Control
-                              as="select"
-                              id="status"
-                              name="status"
-                              defaultValue={data.currentUserInfo.status}
-                        >
-                              <option>NoResponse</option>
-                              <option>Yes</option>
-                              <option>No</option>
-                              <option>Maybe</option>
-                        </Form.Control>
-                    </Col>
+                    <Row className="verticalPaddingMinor">
+                        <Col xs={2}>
+                            <Form.Control
+                                  as="select"
+                                  id="status"
+                                  name="status"
+                                  defaultValue={data.currentUserInfo.status}
+                            >
+                                  <option>NoResponse</option>
+                                  <option>Yes</option>
+                                  <option>No</option>
+                                  <option>Maybe</option>
+                            </Form.Control>
+                        </Col>
 
-                    <Col xs={5}>
-                        <span className="paddingMinor">Reminder</span>
-                        <Form.Control
-                              type="number"
-                              id="reminderXMinsBefore"
-                              name="reminderXMinsBefore"
-                              defaultValue={data.currentUserInfo.reminderXMinsBefore}
-                              className="width40Per inLineBlock"
-                        />
-                         <span className="paddingMinor">Mins Before</span>
-                    </Col>
-                </Row>
+                        <Col xs={5}>
+                            <span className="paddingMinor">Reminder</span>
+                            <Form.Control
+                                  type="number"
+                                  id="reminderXMinsBefore"
+                                  name="reminderXMinsBefore"
+                                  defaultValue={data.currentUserInfo.reminderXMinsBefore}
+                                  className="width40Per inLineBlock"
+                            />
+                             <span className="paddingMinor">Mins Before</span>
+                        </Col>
+                    </Row>
 
-                <Row className="width40Per verticalPaddingMinor">
-                    <Col>
-                        Calendar Private? <span className="paddingMinor"></span>
-                        <Form.Check
-                            type="radio"
-                            inline
-                            label="Yes"
-                            value="true"
-                            id="calendarPublic"
-                            name="calendarVisibleToOthers"
-                            defaultChecked={calendarPrivate}
-                        />
-                        <Form.Check
-                            type="radio"
-                            inline
-                            label="No"
-                            value="false"
-                            id="calendarPrivate"
-                            name="calendarVisibleToOthers"
-                            defaultChecked={calendarPublic}
-                        />
-                    </Col>
-                </Row>
+                    <Row className="width40Per verticalPaddingMinor">
+                        <Col>
+                            Calendar Private? <span className="paddingMinor"></span>
+                            <Form.Check
+                                type="radio"
+                                inline
+                                label="Yes"
+                                value="true"
+                                id="calendarPublic"
+                                name="calendarVisibleToOthers"
+                                defaultChecked={calendarPrivate}
+                            />
+                            <Form.Check
+                                type="radio"
+                                inline
+                                label="No"
+                                value="false"
+                                id="calendarPrivate"
+                                name="calendarVisibleToOthers"
+                                defaultChecked={calendarPublic}
+                            />
+                        </Col>
+                    </Row>
 
-                <Row className="width40Per verticalPaddingMinor">
-                    <Col>
-                        <Button variant="primary" type="submit">
-                            Update
-                        </Button>
-                    <span className="paddingMinor"></span>
-                        <Button variant="primary" onClick={(e) => this.handleLeave(e)}>
-                            Leave Happening
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
+                    <Row className="width40Per verticalPaddingMinor">
+                        <Col>
+                            <Button variant="primary" type="submit">
+                                Update
+                            </Button>
+                        <span className="paddingMinor"></span>
+                            <Button variant="primary" onClick={(e) => this.handleLeave(e)}>
+                                Leave Happening
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
         );
 
         return (
-            <Container className="Profile width80Per leftTextAlign">
+            <Container className="Happening width80Per leftTextAlign">
                 <Row>
                     <Col>
                         <h1>View Happening</h1>
@@ -329,34 +355,7 @@ class Happening extends Component {
                     </Col>
                 </Row>
 
-                <CElm con={data.currentUserInfo}>
-                    {membershipForm}
-                </CElm>
-
-                <CElm con={!data.currentUserInfo}>
-                    <Form>
-                        <input
-                          type="hidden"
-                          id="userId"
-                          name="userId"
-                          value={this.state.userData.id}
-                        />
-                        <input
-                          type="hidden"
-                          id="happeningId"
-                          name="happeningId"
-                          value={data.id}
-                        />
-                        <Row className="width40Per verticalPaddingMinor">
-                            <Col>
-                                <Button variant="primary" onClick={(e) => this.handleJoin(e)}>
-                                    Join Happening
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </CElm>
-
+                {variableForm}
 
             </Container>
         );

@@ -23,7 +23,7 @@ function TopBar(props) {
                             Calendar
                         </RouterNavItem>
 
-                        <RouterNavItem to="/Happening/Write">
+                        <RouterNavItem to="/Happening/Write/">
                             Create Happening
                         </RouterNavItem>
 

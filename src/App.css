@@ -50,12 +50,24 @@ body {
   min-width: 40%;
 }
 
+.width10Per {
+  width: 10%;
+}
+
+.width15Per {
+  width: 15%;
+}
+
 .width20Per {
   width: 20%;
 }
 
 .width40Per {
   width: 40%;
+}
+
+.width60Per {
+  width: 60%;
 }
 
 .width80Per {
@@ -139,4 +151,31 @@ body {
   -ms-filter: blur(4px);
   filter: blur(4px);
   background-color: #f8f9fa;
+}
+
+.link-button {
+  background-color: transparent;
+  color: blue;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.link-button:hover,
+.link-button:focus {
+text-decoration: none;
+}
+
+.thickBorder {
+    border: 1px solid black;
+}
+
+.stackBox {
+    vertical-align: top;
+    min-width: 2%;
+    min-height: 2%;
+    padding: 10px 10px 10px 10px;
 }

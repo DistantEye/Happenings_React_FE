@@ -15,7 +15,7 @@ function ApiRequest(target, method, onSuccess, onFailure, json) {
       postType = 'DELETE';
   }
   else {
-      throw "Methodtype not recognized!";
+      throw new Error("Methodtype not recognized!");
   }
 
   var xhr = new XMLHttpRequest();
