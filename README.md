@@ -7,6 +7,8 @@ This project demonstrates a basic event/scheduling app suitable for personal or 
 The project is built ontop of React, with react-bootstrap, react-router, and webpack as the other major components.
 Everything should pull down and install easily from NPM.
 
+Note that the above linked .NET backend will need to be running for the project to function. Adjust ```REACT_APP_BACKEND_URL``` in the .env file to point to appropiate URL (make sure to include /api in the path)
+
 ## Running Commands
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
