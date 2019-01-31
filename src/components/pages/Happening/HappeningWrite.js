@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DateTime from 'react-datetime';
 
 import { Form, Button, Row, Col, Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import { ApiRequest, SetErrorText }  from '../../../services/ApiRequest';
 import CElm from '../../helper/CElm';
@@ -14,9 +15,11 @@ class HappeningWrite extends Component {
         this.state = {
                         validated: false,
                         errorText: "",
+                        lastErrorCode: undefined,
                         id: props.match.params.id,
                         userData: props.userData,
-                        history: props.history
+                        history: props.history,
+                        location: props.location
                     };
 
         this.getData = this.getData.bind(this);
@@ -24,10 +27,25 @@ class HappeningWrite extends Component {
         this.handleUpdate = this.handleUpdate.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+        this.handleDeleteHappening = this.handleDeleteHappening.bind(this);
     }
 
     componentDidMount() {
         this.getData();
+    }
+
+    // this could be useful in other routes yes, but is essential for this component because of switches from
+    // UpdateComponent to CreateComponent via the navbar
+    componentDidUpdate(prevProps) {
+        if (this.props.location !== prevProps.location) {
+            // because of oddities with the form controls and stickiness (react-bootstrap bug?) we force a hard reload
+            let paramId = "";
+            if (this.props.match.params.id)
+            {
+                paramId = "/"+this.props.match.params.id;
+            }
+            this.state.history.push("/refresh/happening/write"+paramId);
+        }
     }
 
     getData() {
@@ -58,7 +76,7 @@ class HappeningWrite extends Component {
                         });
                     },
                     function(xhr) {
-                        // TODO error handling?
+                        SetErrorText(xhr,self);
                     });
 
         if (self.state.id)
@@ -67,7 +85,8 @@ class HappeningWrite extends Component {
                         function(xhr) {
                             // blank out any existing data first
                             self.setState(state => ({
-                                data: undefined
+                                data: undefined,
+                                lastErrorCode: undefined
                             }));
 
                             const respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
@@ -82,7 +101,10 @@ class HappeningWrite extends Component {
                             }));
                         },
                         function(xhr) {
-                            // TODO error handling?
+                            self.setState({
+                                lastErrorCode: xhr.status
+                            });
+                            SetErrorText(xhr,self);
                         });
         }
     }
@@ -95,18 +117,19 @@ class HappeningWrite extends Component {
         }
         else {
             event.preventDefault(); // we use ajax, avoid submit behaviors getting in the way
+            let selectedIndex = form.elements.controllingUserId.selectedIndex;
             let submitObject = {
                 id: form.elements.id.value,
-                name: form.elements.happeningId.value,
-                description: form.elements.happeningName.value,
-                controllingUser: form.elements.date.value,
-                controllingUserId: form.elements.userId.value,
-                startTime: form.elements.userName.value,
-                endTime: form.elements.status.value,
-                isPrivate: form.elements.calendarPrivate.checked
+                name: form.elements.name.value,
+                description: form.elements.description.value,
+                controllingUser: form.elements.controllingUserId.options[selectedIndex].innerHTML,
+                controllingUserId: form.elements.controllingUserId.value,
+                startTime: form.elements.startTime.value,
+                endTime: form.elements.endTime.value,
+                isPrivate: form.elements.isPrivate.checked
             };
             var self = this;
-            ApiRequest('happening/updatehappeningmember', 'POST',
+            ApiRequest('happening/', 'POST',
                         function(xhr) {
                             const respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
                             let happening = respText && JSON.parse(respText);
@@ -119,6 +142,12 @@ class HappeningWrite extends Component {
                             {
                                 // we've gone from create to edit and need to redirect and update the router
                                 self.state.history.push("/happening/write/" + happening.id);
+                                self.setState({
+                                                validated: false,
+                                                id: happening.id
+                                            }, function() {
+                                                self.getData();
+                                            });
                             }
                             else {
                                 self.getData();
@@ -152,6 +181,24 @@ class HappeningWrite extends Component {
                         SetErrorText(xhr,self);
                     },
                     JSON.stringify(submitObject)
+                );
+
+    }
+
+    handleDeleteHappening(event) {
+        const form = event.currentTarget.form;
+
+        event.preventDefault(); // we use ajax, avoid submit behaviors getting in the way
+
+        var self = this;
+        ApiRequest('happening/'+form.elements.id.value, 'DELETE',
+                    function(xhr) {
+                        // redirect to calendar
+                        self.state.history.push("/calendar");
+                    },
+                    function(xhr) {
+                        SetErrorText(xhr,self);
+                    }
                 );
 
     }
@@ -215,6 +262,33 @@ class HappeningWrite extends Component {
         const userData = this.state.userData;
         const userSet = this.state.userSet;
 
+        if (this.state.lastErrorCode && this.state.lastErrorCode === 404)
+        {
+            return (
+                <Container className="HappeningWrite width80Per leftTextAlign">
+                    <Row>
+                        <Col>
+                            <h1 className="errorText">Not Found</h1>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <p className="errorText">No happening could be found for this id</p>
+                        </Col>
+                    </Row>
+
+                    <Row className="padding" />
+                    <Row>
+                        <Col>
+                            <Link to="/calendar">
+                                Back to Calendar
+                            </Link>
+                        </Col>
+                    </Row>
+                </Container>
+            );
+        }
+
         if (!userSet || (!data && this.state.id))
         {
             // not doing a create and data hasn't loaded yet
@@ -229,7 +303,7 @@ class HappeningWrite extends Component {
         {
             // make a default object to avoid reference issues and set default values
             data = {
-                id: "",
+                id: "00000000-0000-0000-0000-000000000000",
                 name: "",
                 description: "",
                 controllingUser: "",
@@ -289,7 +363,7 @@ class HappeningWrite extends Component {
                         <Col>
                             <UserDropDown
                                     name="userId"
-                                    defValue={userData.id}
+                                    selectedId={userData.id}
                                     userSet={userSet}
                                     className="width20Per inLineBlock"
                                     />
@@ -345,7 +419,7 @@ class HappeningWrite extends Component {
                         <Col>
                             <Form.Control
                               type="text"
-                              placeholder="Login"
+                              placeholder="Name"
                               id="name"
                               name="name"
                               defaultValue={data.name}
@@ -374,8 +448,8 @@ class HappeningWrite extends Component {
                         <Col xs="1">Organizer: </Col>
                         <Col>
                             <UserDropDown
-                                name="status"
-                                defValue={data.controllingUserId}
+                                name="controllingUserId"
+                                selectedId={data.controllingUserId}
                                 userSet={userSet}
                                 className="width20Per"
                             />
@@ -387,15 +461,13 @@ class HappeningWrite extends Component {
                         <Col>
                             <DateTime
                                 defaultValue={data.startTime}
-                                name="startTime"
-                                id="startTime"
+                                inputProps={{id: "startTime", name: "startTime"}}
                                 className="width20Per inLineBlock"
                             />
                             <span className="padding">to</span>
                             <DateTime
                                 defaultValue={data.endTime}
-                                name="startTime"
-                                id="startTime"
+                                inputProps={{id: "endTime", name: "endTime"}}
                                 className="width20Per inLineBlock"
                             />
                         </Col>
@@ -411,7 +483,7 @@ class HappeningWrite extends Component {
                                 value="false"
                                 id="calendarPublic"
                                 name="isPrivate"
-                                defaultChecked={calendarPrivate}
+                                defaultChecked={calendarPublic}
                             />
                             <Form.Check
                                 type="radio"
@@ -420,7 +492,7 @@ class HappeningWrite extends Component {
                                 value="true"
                                 id="calendarPrivate"
                                 name="isPrivate"
-                                defaultChecked={calendarPublic}
+                                defaultChecked={calendarPrivate}
                             />
                         </Col>
                     </Row>
@@ -431,10 +503,20 @@ class HappeningWrite extends Component {
                                 {actionWord + " Happening"}
                             </Button>
                         </Col>
+                        <CElm con={data.id !== "00000000-0000-0000-0000-000000000000"}>
+                            <Button variant="danger" onClick={e => this.handleDeleteHappening(e)}>
+                                Delete
+                            </Button>
+                        </CElm>
                     </Row>
                 </Form>
 
                 {extraSection}
+
+                <Row className="padding" />
+                <Link to="/calendar">
+                    Back to Calendar
+                </Link>
             </Container>
         );
     }

@@ -14,6 +14,7 @@ class Happening extends Component {
         this.state = {
                         validated: false,
                         errorText: "",
+                        lastErrorCode: undefined,
                         id: props.match.params.id,
                         userData: props.userData
                     };
@@ -39,9 +40,10 @@ class Happening extends Component {
         ApiRequest(('happening/getWithCurrUser/'+self.state.id), 'GET',
                     function(xhr) {
                         // blank out any existing data first
-                        self.setState(state => ({
-                            data: undefined
-                        }));
+                        self.setState({
+                            data: undefined,
+                            lastErrorCode: undefined
+                        });
 
                         const respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
                         let happening = respText && JSON.parse(respText);
@@ -50,13 +52,16 @@ class Happening extends Component {
                             happening = undefined; // blank out bad datasets
                         }
 
-                        self.setState(state => ({
+                        self.setState({
                           data: happening,
                           validated: false
-                        }));
+                        });
                     },
                     function(xhr) {
-                        // TODO error handling?
+                        self.setState({
+                            lastErrorCode: xhr.status
+                        });
+                        SetErrorText(xhr,self);
                     });
     }
 
@@ -137,6 +142,33 @@ class Happening extends Component {
 
     render() {
         const data = this.state.data;
+
+        if (this.state.lastErrorCode && this.state.lastErrorCode === 404)
+        {
+            return (
+                <Container className="Happening width80Per leftTextAlign">
+                    <Row>
+                        <Col>
+                            <h1 className="errorText">Not Found</h1>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <p className="errorText">No happening could be found for this id</p>
+                        </Col>
+                    </Row>
+
+                    <Row className="padding" />
+                    <Row>
+                        <Col>
+                            <Link to="/calendar">
+                                Back to Calendar
+                            </Link>
+                        </Col>
+                    </Row>
+                </Container>
+            );
+        }
 
         if (!data)
         {
@@ -357,6 +389,10 @@ class Happening extends Component {
 
                 {variableForm}
 
+                <Row className="padding" />
+                <Link to="/calendar">
+                    Back to Calendar
+                </Link>
             </Container>
         );
     }

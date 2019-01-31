@@ -5,7 +5,7 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { Container, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
 import './App.css';
 
@@ -34,6 +34,7 @@ import CElm from './components/helper/CElm'
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {isLoggedIn: undefined, userData: undefined};
 
     this.checkLogin = this.checkLogin.bind(this);
@@ -105,11 +106,24 @@ class App extends Component {
       );
     }
 
-    const RenderHappeningWrite = ({match,history}) => {
+    const RenderHappeningWrite = ({match,history, location}) => {
       return (
-        <HappeningWrite userData={userData} match={match} history={history} />
+        <HappeningWrite userData={userData} match={match} history={history} location={location} />
       );
     }
+
+    const Refresh = ({ path = '/' }) => (
+        <Route
+            path={path}
+            component={({ history, location, match }) => {
+                history.replace({
+                    ...location,
+                    pathname:location.pathname.substring(match.path.length)
+                });
+                return null;
+            }}
+        />
+    );
 
     return (
       <div className="maxHeight">
@@ -117,7 +131,7 @@ class App extends Component {
             <div className={"App maxHeight" + cssInsert} >
               <TopBar userData={this.state.userData} />
               <div className="content bg-light maxHeight">
-                <Container className="container-fluid">
+                <div className="maxHeight maxWidth">
                     <CElm con={isLoggedIn}>
                         <Switch>
                             <Route path="/calendar/viewOther" component={CalendarViewOther}/>
@@ -130,9 +144,10 @@ class App extends Component {
                             <Route path="/reminders" component={Reminders}/>
                             <Route path="/Logout" render={RenderLogout}/>
                             <Route exact path="/" render={RenderCalendar}/>
+                            <Refresh path="/refresh"/>
                         </Switch>
                     </CElm>
-                </Container>
+                </div>
               </div>
             </div>
           </HashRouter>

@@ -309,7 +309,7 @@ class Calendar extends Component {
             let finalizedDataSet = [];
             for (let i = 0; i < adjustedDataSet.length; i++)
             {
-                finalizedDataSet[i] = (<Row key={"rowKey"+i}>
+                finalizedDataSet[i] = (<Row key={"rowKey"+i} className="calendarRow">
                                             {adjustedDataSet[i]}
                                         </Row>);
             }
@@ -319,80 +319,84 @@ class Calendar extends Component {
                             </>);
 
             return (
-                <Container className="Calendar leftTextAlign">
-                    <Row>
-                        <Col>
-                            <h1>Calendar - {moment(startDate).format("MMMM")}</h1>
-                        </Col>
-                    </Row>
+                <Container fluid className="Calendar leftTextAlign maxHeight maxWidth">
+                    <Container className="leftTextAlign">
+                        <Row>
+                            <Col>
+                                <h1>Calendar - {moment(startDate).format("MMMM")}</h1>
+                            </Col>
+                        </Row>
 
-                    <Row className="paddingMinor" />
+                        <Row className="paddingMinor" />
 
-                    {disableViewAs}
+                        {disableViewAs}
 
-                    <Row>
-                        <Col>
-                            <button
-                                type="button"
-                                className="link-button"
-                                onClick={e => this.handleToggle(e)}>
-                                    List View
-                                </button>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col>
+                                <button
+                                    type="button"
+                                    className="link-button"
+                                    onClick={e => this.handleToggle(e)}>
+                                        List View
+                                    </button>
+                            </Col>
+                        </Row>
 
-                    <Row className="paddingMinor" />
+                        <Row className="paddingMinor" />
 
-                    <Row>
-                        <Col>
-                            <span className="paddingMinor">Start:</span>
-                            <DateTime
-                                name="startTime"
-                                id="startTime"
-                                value={startDate}
-                                onChange={e => this.handleOnStartDateChange(e)}
-                                className="width20Per inLineBlock"
-                            />
-                            <span className="paddingMinor">End:</span>
-                            <DateTime
-                                name="endTime"
-                                id="endTime"
-                                value={endDate}
-                                onChange={e => this.handleOnEndDateChange(e)}
-                                className="width20Per inLineBlock"
-                            />
-                            <span className="paddingMinor" />
-                            <Button
-                                className="nudgeUpMinor"
-                                onClick={e => this.handleUpdateFilter(e)}
-                                >
-                                Update Filter
-                            </Button>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col>
+                                <span className="paddingMinor">Start:</span>
+                                <DateTime
+                                    name="startTime"
+                                    id="startTime"
+                                    value={startDate}
+                                    onChange={e => this.handleOnStartDateChange(e)}
+                                    className="width20Per inLineBlock"
+                                />
+                                <span className="paddingMinor">End:</span>
+                                <DateTime
+                                    name="endTime"
+                                    id="endTime"
+                                    value={endDate}
+                                    onChange={e => this.handleOnEndDateChange(e)}
+                                    className="width20Per inLineBlock"
+                                />
+                                <span className="paddingMinor" />
+                                <Button
+                                    className="nudgeUpMinor"
+                                    onClick={e => this.handleUpdateFilter(e)}
+                                    >
+                                    Update Filter
+                                </Button>
+                            </Col>
+                        </Row>
 
-                    <Row className="paddingMinor" />
+                        <Row className="paddingMinor" />
 
-                    <Row>
-                        <Col>
-                            <Button
-                                className="nudgeUpMinor"
-                                onClick={e => this.addMonthAndUpdate(-1)}
-                                >
-                                Previous Month
-                            </Button>
-                            <span className="paddingMinor" />
-                            <Button
-                                className="nudgeUpMinor"
-                                onClick={e => this.addMonthAndUpdate(1)}
-                                >
-                                Next Month
-                            </Button>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col>
+                                <Button
+                                    className="nudgeUpMinor"
+                                    onClick={e => this.addMonthAndUpdate(-1)}
+                                    >
+                                    Previous Month
+                                </Button>
+                                <span className="paddingMinor" />
+                                <Button
+                                    className="nudgeUpMinor"
+                                    onClick={e => this.addMonthAndUpdate(1)}
+                                    >
+                                    Next Month
+                                </Button>
+                            </Col>
+                        </Row>
 
-                    <Row className="paddingMinor" />
-                    {calendar}
+                        <Row className="paddingMinor" />
+                    </Container>
+                    <Container fluid className="maxWidth maxHeight">
+                        {calendar}
+                    </Container>
                 </Container>
             );
         }
@@ -521,12 +525,12 @@ function InsideCalendarBox(props)
 
 	return (<>
                {data[day].map(function(item,index) {
-                                return (<>
+                                return (<span key={"boxIdx"+index}>
                                     <br />
-                                    <Link to={"/happening/"+item.id} key={"boxIdx"+index}>
+                                    <Link to={"/happening/"+item.id}>
                                         {item.name + " : " + moment(item.startTime).format('MMMM DD, YYYY hh:mm:ss A')}
                                     </Link>
-                                </>)
+                                </span>)
                             })}
             </>);
 }

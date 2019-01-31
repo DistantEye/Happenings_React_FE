@@ -127,6 +127,10 @@ body {
   height: 100%;
 }
 
+.maxWidth {
+  width: 100%;
+}
+
 .rightContainer {
     margin-left: auto;
     margin-right: 0;
@@ -169,13 +173,17 @@ body {
 text-decoration: none;
 }
 
-.thickBorder {
-    border: 1px solid black;
-}
-
 .stackBox {
     vertical-align: top;
     min-width: 2%;
     min-height: 2%;
     padding: 10px 10px 10px 10px;
+}
+
+.thickBorder {
+    border: 1px solid black;
+}
+
+.calendarRow {
+    min-height: 12%;
 }

@@ -11,8 +11,8 @@ import ReminderCount from './ReminderCount';
 import RouterNavItem from './RouterNavItem';
 
 function TopBar(props) {
-  return (<Navbar bg="light">
-              <Container className="container-fluid">
+  return (<Navbar bg="dark" variant="dark">
+              <Container>
                 <Navbar.Brand className="brandText">
                     Happenings
                 </Navbar.Brand>
@@ -23,7 +23,7 @@ function TopBar(props) {
                             Calendar
                         </RouterNavItem>
 
-                        <RouterNavItem to="/Happening/Write/">
+                        <RouterNavItem to="/Happening/Write/" exact={true}>
                             Create Happening
                         </RouterNavItem>
 
