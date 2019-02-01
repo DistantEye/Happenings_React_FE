@@ -28,7 +28,8 @@ You will also see any lint errors in the console.
 #### `npm test`
 
 Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+Note that jest tests aren't implemented currently and are just included from the scaffold
 
 #### `npm run build`
 
@@ -36,9 +37,6 @@ Builds the app for production to the `build` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ## Notes
 
@@ -50,3 +48,4 @@ As with the .NET project, there are some considerations on where this project co
     * Pages should have loading placeholder panels instead of components simply returning null when data hasn't loaded
     * Edges should be stylized a bit to liven up the relatively flat appearance
     * Spacing and alignment on UI elements should be adjusted. There are a few different schools of thought for UI design and the current placements don't quite match either of them
+* Jest tests aren't implemented beyond the placeholder. In a larger project, we'd want something for regression testing
