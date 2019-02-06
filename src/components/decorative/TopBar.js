@@ -6,57 +6,97 @@ import {
   Nav
 } from 'react-bootstrap';
 
-import CElm from '../helper/CElm';
 import ReminderCount from './ReminderCount';
 import RouterNavItem from './RouterNavItem';
 
 function TopBar(props) {
-  return (<Navbar bg="dark" variant="dark">
-              <Container>
+    const userData = props.userData;
+
+    // store relevant info in tag agnostic way
+    const linkArray = [
+        {
+            key:     "CalendarMain",
+            to:      "/Calendar/Index",
+            inner:   "Calendar",
+            display: true
+        },
+        {
+            key:     "CreateHappening",
+            to:      "/Happening/Write/",
+            inner:   "Create Happening",
+            exact:   true,
+            display: true
+        },
+        {
+            key:     "Invitations",
+            to:      "/Invitation/Index",
+            inner:   "Pending Invitations",
+            display: true
+        },
+        {
+            key:     "CalendarViewOther",
+            to:      "/Calendar/ViewOther",
+            inner:   "View Other Calendars",
+            display: true
+        },
+        {
+            key:     "Profile",
+            to:      "/Profile",
+            inner:   "Profile",
+            display: true
+        },
+        {
+            key:     "Admin",
+            to:      "/Admin/Index",
+            inner:   "Admin",
+            display: (userData.role === "Admin")
+        },
+        {
+            key:     "Reminders",
+            to:      "/Reminders",
+            inner:   (<>Reminders <ReminderCount></ReminderCount></>),
+            display: true
+        },
+        {
+            key:     "Logout",
+            to:      "/Logout",
+            inner:   "Logout",
+            display: true
+        },
+
+    ];
+
+    return (
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Container>
                 <Navbar.Brand className="brandText">
                     Happenings
                 </Navbar.Brand>
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav defaultActiveKey="/Calendar/Index" as="ul">
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Nav defaultActiveKey="/Calendar/Index" as="ul" >
+                        {linkArray.map(function(item,index) {
+                            if (!item.display)
+                            {
+                                return null;
+                            }
 
-                        <RouterNavItem to="/Calendar/Index">
-                            Calendar
-                        </RouterNavItem>
-
-                        <RouterNavItem to="/Happening/Write/" exact={true}>
-                            Create Happening
-                        </RouterNavItem>
-
-                        <RouterNavItem to="/Invitation/Index">
-                            Pending Invitations
-                        </RouterNavItem>
-
-                        <RouterNavItem to="/Calendar/ViewOther">
-                            View Other Calendars
-                        </RouterNavItem>
-
-                        <RouterNavItem to="/Profile">
-                            Profile
-                        </RouterNavItem>
-
-                        <CElm con={props.userData.role === "Admin"}>
-                            <RouterNavItem to="/Admin/Index">
-                                Admin
-                            </RouterNavItem>
-                        </CElm>
-
-                        <RouterNavItem to="/Reminders">
-                            Reminders <ReminderCount></ReminderCount>
-                        </RouterNavItem>
-
-                        <RouterNavItem to="/Logout">
-                            Logout
-                        </RouterNavItem>
+                            return (
+                                    <RouterNavItem
+                                        to={item.to}
+                                        exact={item.exact}
+                                        key={item.key}
+                                    >
+                                        {item.inner}
+                                    </RouterNavItem>
+                                );
+                        })}
 
                     </Nav>
                 </Navbar.Collapse>
-              </Container>
-          </Navbar>);
+            </Container>
+        </Navbar>
+    );
 }
 
 export default TopBar;

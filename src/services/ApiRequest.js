@@ -21,6 +21,7 @@ function ApiRequest(target, method, onSuccess, onFailure, json) {
     var xhr = new XMLHttpRequest();
     xhr.open(postType, urlBase + target);
     xhr.withCredentials = true;
+    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
 
     if (json) {
         xhr.setRequestHeader('Content-Type', 'application/json');

@@ -19,6 +19,7 @@ function RouterNavItem(props) {
 
 RouterNavItem.propTypes = {
   to: PropTypes.any.isRequired,
+  exact: PropTypes.bool
 }
 
 export default RouterNavItem;

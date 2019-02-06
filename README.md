@@ -49,3 +49,4 @@ As with the .NET project, there are some considerations on where this project co
     * Edges should be stylized a bit to liven up the relatively flat appearance
     * Spacing and alignment on UI elements should be adjusted. There are a few different schools of thought for UI design and the current placements don't quite match either of them
 * Jest tests aren't implemented beyond the placeholder. In a larger project, we'd want something for regression testing
+* There is some semblance of Responsive Design in the the Navbar and Calendar Page, but there is room for a lot more

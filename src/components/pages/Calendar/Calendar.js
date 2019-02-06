@@ -6,8 +6,8 @@ import DateTime from 'react-datetime';
 import { ApiRequest }  from '../../../services/ApiRequest';
 import { Button, Row, Col, Container } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Link } from 'react-router-dom';
 
+import InsideCalendarBox from './InsideCalendarBox';
 import UserDropDown from '../../helper/UserDropDown';
 
 class Calendar extends Component {
@@ -230,9 +230,16 @@ class Calendar extends Component {
             return null;
         }
 
+        const startDate = this.state.startDate;
+        const endDate = this.state.endDate;
+        const newStartDate = this.state.new_startDate;
+        const newEndDate = this.state.new_endDate;
+
+        const startDateDisplay = newStartDate && newStartDate !== startDate  ? newStartDate : startDate;
+        const endDateDisplay = newEndDate && newEndDate !== endDate  ? newEndDate : endDate;
+
         if (!this.state.listView) {
-            const startDate = this.state.startDate;
-            const endDate = this.state.endDate;
+
             const startOfMonth = moment(startDate).startOf('month');
             const endOfMonth = moment(startDate).endOf('month');
             const monthStartOffset = startOfMonth.day();
@@ -281,9 +288,14 @@ class Calendar extends Component {
             {
                 let currLen = adjustedDataSet[0].length;
                 let day = dataIdx++;
+                const hapLength = data && data[day] ? data[day].length : -1;
                 adjustedDataSet[0][currLen] = (<Col className="thickBorder stackBox" key={"colKey"+currLen}>
-                                                    {day+1}
-                                                    <InsideCalendarBox data={data} day={day} />
+                                                    <InsideCalendarBox
+                                                        data={data}
+                                                        day={day}
+                                                        monthName={moment(startDate).format("MMMM")}
+                                                        key={day+"-"+hapLength}
+                                                    />
                                                 </Col>);
             }
 
@@ -295,9 +307,14 @@ class Calendar extends Component {
                     if (dataIdx < monthLength)
                     {
                         let day = dataIdx++;
+                        const hapLength = data && data[day] ? data[day].length : -1;
                         adjustedDataSet[x][i] = (<Col className="thickBorder stackBox" key={"colKey"+i}>
-                                                        {day+1}
-                                                        <InsideCalendarBox data={data} day={day} />
+                                                        <InsideCalendarBox
+                                                            data={data}
+                                                            day={day}
+                                                            monthName={moment(startDate).format("MMMM")}
+                                                            key={day+"-"+hapLength}
+                                                        />
                                                  </Col>);
                     }
                     else {
@@ -350,7 +367,7 @@ class Calendar extends Component {
                                 <DateTime
                                     name="startTime"
                                     id="startTime"
-                                    value={startDate}
+                                    value={startDateDisplay}
                                     onChange={e => this.handleOnStartDateChange(e)}
                                     className="width20Per inLineBlock"
                                 />
@@ -358,7 +375,7 @@ class Calendar extends Component {
                                 <DateTime
                                     name="endTime"
                                     id="endTime"
-                                    value={endDate}
+                                    value={endDateDisplay}
                                     onChange={e => this.handleOnEndDateChange(e)}
                                     className="width20Per inLineBlock"
                                 />
@@ -401,8 +418,6 @@ class Calendar extends Component {
             );
         }
         else {
-            const startDate = this.state.startDate;
-            const endDate = this.state.endDate;
             let rows = (<Row><Col xs="auto" className="bold">No results found</Col></Row>);
             const rData = data[0]; // text mode only uses the first row
             if (rData.length > 0)
@@ -482,7 +497,7 @@ class Calendar extends Component {
                             <DateTime
                                 name="startTime"
                                 id="startTime"
-                                value={startDate}
+                                value={startDateDisplay}
                                 onChange={e => this.handleOnStartDateChange(e)}
                                 className="width20Per inLineBlock"
                             />
@@ -490,7 +505,7 @@ class Calendar extends Component {
                             <DateTime
                                 name="endTime"
                                 id="endTime"
-                                value={endDate}
+                                value={endDateDisplay}
                                 onChange={e => this.handleOnEndDateChange(e)}
                                 className="width20Per inLineBlock"
                             />
@@ -511,28 +526,6 @@ class Calendar extends Component {
             );
         }
     }
-}
-
-function InsideCalendarBox(props)
-{
-	let data = props.data;
-	let day = props.day;
-
-	if (!data[day])
-	{
-		return (<></>);
-	}
-
-	return (<>
-               {data[day].map(function(item,index) {
-                                return (<span key={"boxIdx"+index}>
-                                    <br />
-                                    <Link to={"/happening/"+item.id}>
-                                        {item.name + " : " + moment(item.startTime).format('MMMM DD, YYYY hh:mm:ss A')}
-                                    </Link>
-                                </span>)
-                            })}
-            </>);
 }
 
 export default Calendar;
