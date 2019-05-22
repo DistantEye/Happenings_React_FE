@@ -9,6 +9,8 @@ Everything should pull down and install easily from NPM.
 
 Note that the above linked .NET backend will need to be running for the project to function. Adjust ```REACT_APP_BACKEND_URL``` in the .env file to point to appropiate URL (make sure to include /api in the path)
 
+The current authentication implementation (cookie auth) requires the site needs to be hosted under the same domain as the backend, either via a subfolder, or via different port, etc.
+
 ## Running Commands
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -50,3 +52,4 @@ As with the .NET project, there are some considerations on where this project co
     * Spacing and alignment on UI elements should be adjusted. There are a few different schools of thought for UI design and the current placements don't quite match either of them
 * Jest tests aren't implemented beyond the placeholder. In a larger project, we'd want something for regression testing
 * There is some semblance of Responsive Design in the the Navbar and Calendar Page, but there is room for a lot more
+* The lack of sockets means some functions do not sync as reactively as they could if changes are made by another user or on another page. This would be a big concern in a real world application, but the limitations are acceptable for a demo

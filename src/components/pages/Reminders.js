@@ -89,7 +89,7 @@ class Reminders extends Component {
                         let reminders = respText && JSON.parse(respText);
                         if (!Array.isArray(reminders) || reminders.length === 0 || !reminders[0].startRemindAt)
                         {
-                            reminders = undefined; // blank out bad datasets
+                            reminders = []; // blank out bad datasets to an empty array (we still got a 'response')
                         }
 
 

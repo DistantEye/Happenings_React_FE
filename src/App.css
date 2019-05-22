@@ -90,8 +90,31 @@ body {
   padding: 5px 0px 5px 0px;
 }
 
+.horizontalPaddingMinor {
+  padding: 0px 5px 0px 5px;
+}
+
+.horizontalPadding {
+  padding: 0px 10px 0px 10px;
+}
+
+.horizontalPaddingMajor {
+  padding: 0px 20px 0px 20px;
+}
+
+.noWrap {
+    white-space: nowrap;
+}
+
+
 .vAlignCenter {
     vertical-align: middle;
+}
+
+.hAlignCenter {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
 }
 
 .nudgeUp {
@@ -186,4 +209,39 @@ text-decoration: none;
 
 .calendarRow {
     min-height: 12%;
+}
+
+.dispFlex {
+    display: flex;
+}
+
+.dispInlineFlex {
+    display: inline-flex;
+}
+
+.flexNoGrow {
+    flex: 0 1 auto;
+}
+
+.flexNoOverFlow {
+    flex: 1 1 0;
+}
+
+.fadeTrans-enter, .fadeTrans-enter * {
+  opacity: 0 !important;
+  background-color: transparent !important;
+}
+.fadeTrans-enter-active, .fadeTrans-enter-active * {
+  opacity: 1 !important;
+  background-color: inherit;
+  transition: all 400ms;
+}
+.fadeTrans-exit, .fadeTrans-exit * {
+  opacity: 1 !important;
+  background-color: inherit;
+}
+.fadeTrans-exit-active, .fadeTrans-exit-active * {
+  opacity: 0 !important;
+  background-color: transparent !important;
+  transition: all 400ms;
 }

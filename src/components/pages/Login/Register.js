@@ -7,10 +7,13 @@ class Register extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {  validated: false,
-                        errorText: "",
+        this.state = {
+                        validated: false,
+                        errorText: props.errorText || "",
                         parentCallback: props.callback,
-                        tabSwitchCallback : props.tabSwitchCallBack};
+                        tabSwitchCallback : props.tabSwitchCallBack,
+                        hideSwitch: props.hideSwitch
+                    };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -51,14 +54,16 @@ class Register extends Component {
                 <div>
                     <span className="bigText">Register</span>
                     <span className="padding">
-                        <Button
-                            variant="outline-secondary"
-                            type="button"
-                            onClick={(e) => this.state.tabSwitchCallback(e)}
-                            className="nudgeUp"
-                        >
-                            Existing User
-                        </Button>
+                        <CElm cond={!this.state.hideSwitch}>
+                            <Button
+                                variant="outline-secondary"
+                                type="button"
+                                onClick={(e) => this.state.tabSwitchCallback(e)}
+                                className="nudgeUp"
+                            >
+                                Existing User
+                            </Button>
+                        </CElm>
                     </span>
                     <br/>
                     <CElm con={this.state.errorText}>

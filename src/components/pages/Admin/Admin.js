@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Button, Row, Col, Container } from 'react-bootstrap';
+import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
+import { CSSTransition } from 'react-transition-group'
 import { ApiRequest, SetErrorText }  from '../../../services/ApiRequest'
 import CElm from '../../helper/CElm'
 
@@ -13,10 +14,13 @@ class Admin extends Component {
                         validatedObj: [false],
                         errorText: "",
                         parentCallback: props.callback,
+                        systemInfo: props.systemInfo,
+                        openRegistration: props.systemInfo && props.systemInfo.openRegistration, // this value can become stale from the parent so we track it separately
                         data: undefined};
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        this.handleOpenRegChange = this.handleOpenRegChange.bind(this);
         this.getData = this.getData.bind(this);
     }
 
@@ -27,17 +31,72 @@ class Admin extends Component {
     handleDelete(event) {
         const form = event.currentTarget.form;
 
-        var self = this;
+        const targetId = form.elements.id.value;
+        const currUserId = this.state.systemInfo && this.state.systemInfo.currentUser && this.state.systemInfo.currentUser.id;
 
-        ApiRequest(('admin/delete/'+form.elements.id.value), 'DELETE',
-                    function(xhr) {
-                          self.getData();
+        ApiRequest(('admin/'+targetId), 'DELETE',
+                    (xhr) => {
+                        // clear errorText on success
+                        this.setState({errorText: ""}, () => {
+                            if (targetId !== currUserId)
+                            {
+                                this.getData();
+                            }
+                            else
+                            {
+                                this.state.parentCallback();
+                            }
+                        });
                     },
-                    function(xhr) {
-                        SetErrorText(xhr,self);
+                    (xhr) => {
+                        SetErrorText(xhr,this);
                     }
                 );
 
+    }
+
+    handleOpenRegChange(flag)
+    {
+        // to future proof against other values that end up in system settings we grab a new copy of SystemDataDto first, change our value, and resubmit it
+        ApiRequest('admin/system', 'GET',
+                    (xhr) => {
+
+                      let respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
+                      let systemData = respText && JSON.parse(respText);
+                      if (!systemData || !systemData.id)
+                      {
+                          systemData = undefined; // blank out bad datasets
+                      }
+                      else
+                      {
+                          systemData.openRegistration = flag;
+
+                          ApiRequest('admin/system', 'PUT',
+                                      (xhr) => {
+                                          respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
+                                          systemData = respText && JSON.parse(respText);
+                                          const openRegistration = systemData && systemData.openRegistration;
+
+                                          // set timeout for the below message to expire
+                                          window.setTimeout(() =>
+                                          {
+                                              this.setState({successText:undefined});
+                                          }, 5000);
+                                          this.setState({
+                                                            successText: "Open Registration successfully set to: ("+ flag +")",
+                                                            openRegistration: openRegistration
+                                                        });
+                                      },
+                                      (xhr) => {
+                                          SetErrorText(xhr,this);
+                                      },
+                                      JSON.stringify(systemData));
+
+                      }
+                    },
+                    (xhr) => {
+                        SetErrorText(xhr,this);
+                    });
     }
 
     handleSubmit(event) {
@@ -69,10 +128,7 @@ class Admin extends Component {
 
             ApiRequest(target, method,
                         function(xhr) {
-                              if (self.state.parentCallback) {
-                                  self.state.parentCallback();
-                              }
-                              self.getData();
+                              self.setState({errorText: ""}, () => self.getData());
                         },
                         function(xhr) {
                             SetErrorText(xhr,self);
@@ -128,6 +184,10 @@ class Admin extends Component {
             return null; // TODO loading placeholder eventually?
         }
         else {
+            const openRegistration = this.state.openRegistration !== undefined ? this.state.openRegistration : undefined;
+            const oRegYesBox = openRegistration === true ? "checked" : "";
+            const oRegNoBox = openRegistration === false ? "checked" : "";
+
             const dataSections = (
                                  <>
                                     {this.state.data.map(function(item,index) {
@@ -154,6 +214,32 @@ class Admin extends Component {
                     <CElm con={this.state.errorText}>
                         <p className="errorText">{this.state.errorText}</p>
                     </CElm>
+
+                    <CSSTransition in={this.state.successText} timeout={400} mountOnEnter unmountOnExit classNames="fadeTrans">
+                        <Alert variant="success">
+                            {this.state.successText}
+                        </Alert>
+                    </CSSTransition>
+
+
+                    <hr />
+                    <h2>System Configuration</h2>
+
+                    <Row className="bold">
+                        <Col>Users Can Create Accounts for Themselves: </Col>
+                    </Row>
+
+                    <Row className="hAlignCenter dispInlineFlex flexNoGrow verticalPaddingMinor">
+                        <Col className="noWrap">
+                            Yes <input type="radio" name="openRegistration" value="Yes" onClick={() => this.handleOpenRegChange(true)} defaultChecked={oRegYesBox} />
+                        </Col>
+                        <Col className="noWrap">
+                            No <input type="radio" name="openRegistration" value="No" onClick={() => this.handleOpenRegChange(false)} defaultChecked={oRegNoBox} />
+                        </Col>
+                    </Row>
+
+                    <hr />
+
                     <h2>Existing Users</h2>
 
                         <Row className="bold">

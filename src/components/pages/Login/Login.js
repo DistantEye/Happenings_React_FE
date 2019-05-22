@@ -1,17 +1,32 @@
 import React, { Component } from 'react';
-import { Form, Button, Row } from 'react-bootstrap';
-import { ApiRequest, SetErrorText }  from '../../../services/ApiRequest'
-import CElm from '../../helper/CElm'
-import Register from './Register'
+import { Form, Button, Row, Tooltip } from 'react-bootstrap';
+import { ApiRequest, SetErrorText }  from '../../../services/ApiRequest';
+import CElm from '../../helper/CElm';
+import CondOverlayTrigger from '../../helper/CondOverlayTrigger';
+import Register from './Register';
 
 class Login extends Component {
     constructor(props) {
         super(props);
 
+        let tab = "login";
+        let regErrorText = "";
+        let forceRegister = false;
+        if (props.systemInfo && props.systemInfo.hasUsers === false)
+        {
+            tab = "register";
+            regErrorText = "No Users Found : Create the Admin User";
+            forceRegister = true;
+        }
+
         this.state = {  validated: false,
                         errorText: "",
+                        regErrorText: regErrorText,
+                        forceRegister: forceRegister,
                         parentCallback: props.callback,
-                        tab: "login"};
+                        tab: tab,
+                        systemInfo: props.systemInfo
+                    };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleTabSwitch = this.handleTabSwitch.bind(this);
     }
@@ -70,14 +85,25 @@ class Login extends Component {
                 <div>
                     <span className="bigText">Login</span>
                     <span className="padding">
-                        <Button
-                            variant="outline-secondary"
-                            type="button"
-                            onClick={(e) => this.handleTabSwitch(e)}
-                            className="nudgeUp"
+                        <CondOverlayTrigger
+                            con={!this.state.systemInfo.openRegistration}
+                            placement="right"
+                            overlay={
+                            <Tooltip>
+                                Open Registration is disabled. Contact the admin for an account.
+                            </Tooltip>
+                            }
                         >
-                            New User
-                        </Button>
+                            <Button
+                                variant="outline-secondary"
+                                type="button"
+                                onClick={(e) => this.handleTabSwitch(e)}
+                                className="nudgeUp"
+                                disabled={!this.state.systemInfo.openRegistration}
+                            >
+                                New User
+                            </Button>
+                        </CondOverlayTrigger>
                     </span>
                     <br/>
                     <CElm con={this.state.errorText}>
@@ -118,7 +144,12 @@ class Login extends Component {
             );
         }
         else {
-            return <Register callback={this.state.parentCallback} tabSwitchCallBack={this.handleTabSwitch}/>
+            return <Register
+                        callback={this.state.parentCallback}
+                        tabSwitchCallBack={this.handleTabSwitch}
+                        errorText={this.state.regErrorText}
+                        hideSwitch={this.state.forceRegister}
+                    />
         }
     }
 }

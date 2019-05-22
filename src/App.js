@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Route,
-  HashRouter,
+  BrowserRouter,
   Switch
 } from 'react-router-dom';
 
@@ -35,7 +35,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {isLoggedIn: undefined, userData: undefined};
+    this.state = {isLoggedIn: undefined, userData: undefined, apiResponse: false};
 
     this.checkLogin = this.checkLogin.bind(this);
   }
@@ -54,13 +54,17 @@ class App extends Component {
 
   checkLogin() {
     var self = this;
-    ApiRequest('login/getcurrentUser', 'GET',
+    ApiRequest('home/getInfo', 'GET',
                 function(xhr) {
                   const respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
-                  let user = respText && JSON.parse(respText);
+                  let data = respText && JSON.parse(respText);
+                  let user = data && data.currentUser;
+
                   self.setState(state => ({
-                    isLoggedIn: !(!user || user === null || user === undefined),
-                    userData: user
+                    apiResponse: true,
+                    isLoggedIn: user && user.id,
+                    userData: user,
+                    systemInfo: data
                   }));
                 },
                 function(xhr) {
@@ -69,9 +73,9 @@ class App extends Component {
   }
 
   render() {
-    const isLoggedIn = this.state.isLoggedIn;
+    const { isLoggedIn, apiResponse } = this.state;
 
-    if (isLoggedIn === undefined) { return null; } // haven't gotten any response back yet
+    if (!apiResponse) { return null; } // haven't gotten any response back yet
 
     let cssInsert = "";
 
@@ -85,8 +89,9 @@ class App extends Component {
       );
     }
 
-    const loginId = this.state.userData.id;
     const userData = this.state.userData;
+    const loginId = userData && userData.id;
+
 
     const RenderCalendar = ({location}) => {
       return (
@@ -97,6 +102,12 @@ class App extends Component {
     const RenderProfile = (props) => {
       return (
         <Profile userId={loginId} />
+      );
+    }
+
+    const RenderAdmin = (props) => {
+      return (
+        <Admin systemInfo={this.state.systemInfo} callback={this.checkLogin} />
       );
     }
 
@@ -127,9 +138,9 @@ class App extends Component {
 
     return (
       <div className="maxHeight">
-          <HashRouter>
+          <BrowserRouter basename={ process.env.REACT_APP_BASE_PATH}>
             <div className={"App maxHeight" + cssInsert} >
-              <TopBar userData={this.state.userData} />
+              <TopBar userData={this.state.userData} numActive={this.state.systemInfo && this.state.systemInfo.reminderCount} />
               <div className="content bg-light maxHeight">
                 <div className="maxHeight maxWidth">
                     <CElm con={isLoggedIn}>
@@ -140,7 +151,7 @@ class App extends Component {
                             <Route path="/happening/:id" render={RenderHappening}/>
                             <Route path="/invitation" component={Invitations}/>
                             <Route path="/profile" render={RenderProfile}/>
-                            <Route path="/admin" component={Admin}/>
+                            <Route path="/admin" render={RenderAdmin}/>
                             <Route path="/reminders" component={Reminders}/>
                             <Route path="/Logout" render={RenderLogout}/>
                             <Route exact path="/" render={RenderCalendar}/>
@@ -150,7 +161,7 @@ class App extends Component {
                 </div>
               </div>
             </div>
-          </HashRouter>
+          </BrowserRouter>
           <Modal
             show={!isLoggedIn}
             centered
@@ -158,7 +169,7 @@ class App extends Component {
             dialogClassName="largeModal"
           >
             <div className="padding">
-              <Login callback={this.checkLogin}/>
+              <Login callback={this.checkLogin} systemInfo={this.state.systemInfo} />
             </div>
           </Modal>
       </div>

@@ -97,7 +97,8 @@ class HappeningWrite extends Component {
                             }
 
                             self.setState(state => ({
-                              data: happening
+                              data: happening,
+                              validated: false
                             }));
                         },
                         function(xhr) {
@@ -129,7 +130,10 @@ class HappeningWrite extends Component {
                 isPrivate: form.elements.isPrivate.checked
             };
             var self = this;
-            ApiRequest('happening/', 'POST',
+
+            const methodType = this.state.id ? 'PUT' : 'POST';
+
+            ApiRequest('happening/', methodType,
                         function(xhr) {
                             const respText = (xhr.responseText && xhr.responseText !== "") && xhr.responseText;
                             let happening = respText && JSON.parse(respText);
@@ -141,13 +145,7 @@ class HappeningWrite extends Component {
                             if (submitObject.id !== happening.id)
                             {
                                 // we've gone from create to edit and need to redirect and update the router
-                                self.state.history.push("/happening/write/" + happening.id);
-                                self.setState({
-                                                validated: false,
-                                                id: happening.id
-                                            }, function() {
-                                                self.getData();
-                                            });
+                                self.state.history.push("/happening/write/" + happening.id); // no further state updates are needed because this forces a reload?
                             }
                             else {
                                 self.getData();

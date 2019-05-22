@@ -12,6 +12,8 @@ import RouterNavItem from './RouterNavItem';
 function TopBar(props) {
     const userData = props.userData;
 
+    if (!userData) { return null; }
+
     // store relevant info in tag agnostic way
     const linkArray = [
         {
@@ -54,7 +56,7 @@ function TopBar(props) {
         {
             key:     "Reminders",
             to:      "/Reminders",
-            inner:   (<>Reminders <ReminderCount></ReminderCount></>),
+            inner:   (<>Reminders <ReminderCount numActive={props.numActive}></ReminderCount></>),
             display: true
         },
         {
