@@ -495,16 +495,22 @@ class HappeningWrite extends Component {
                         </Col>
                     </Row>
 
-                    <Row className="width40Per verticalPaddingMinor">
+                    <Row className="width60Per verticalPaddingMinor">
                         <Col>
                             <Button variant="primary" type="submit">
                                 {actionWord + " Happening"}
                             </Button>
+                            <CElm con={data.id === "00000000-0000-0000-0000-000000000000"}>
+                                <span className="horizontalPadding">Note: Happenings start empty. Add users after creation</span>
+                            </CElm>
                         </Col>
+
                         <CElm con={data.id !== "00000000-0000-0000-0000-000000000000"}>
-                            <Button variant="danger" onClick={e => this.handleDeleteHappening(e)}>
-                                Delete
-                            </Button>
+                            <Col>
+                                <Button variant="danger" onClick={e => this.handleDeleteHappening(e)}>
+                                    Delete
+                                </Button>
+                            </Col>
                         </CElm>
                     </Row>
                 </Form>
